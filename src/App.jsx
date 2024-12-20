@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Struttura base per un nuovo articolo
 const initialFormData = {
@@ -8,13 +8,26 @@ const initialFormData = {
   image: "",
   content: "",
   category: "",
-};
+  tags: [],
+  published: false
+}
 
 function App() {
 
   const [article, setArticle] = useState([]);
 
   const [formData, setFormData] = useState(initialFormData);
+
+  const [availableMessage, setAvailableMessage] = useState("");
+
+  // Viene eseguito ogni volta che cambia lo stato "published" del form
+  useEffect(() => {
+    if (formData.published) {
+      setAvailableMessage("Stai pubblicando il post, controlla se tutti i dati inseriti sono corretti");
+    } else {
+      setAvailableMessage("Nessun post ancora pubblicato");
+    }
+  }, [formData.published]);
 
   // Gestione del modulo quando viene inviato
   const handleArticleForm = (event) => {
@@ -36,7 +49,7 @@ function App() {
   const cancel = (idToDelete) => {
     const newArray = article.filter(curArticle => curArticle.id !== idToDelete);
     setArticle(newArray);
-  };
+  }
 
   const handleInputChange = (event) => {
     const keyToChange = event.target.name; // Nome del campo modificato.
@@ -50,6 +63,13 @@ function App() {
     setFormData(newData);
   };
 
+  // Gestione del cambiamento per la checkbox.
+  const handlePublishedChange = () => {
+    setFormData({
+      ...formData,
+      published: !formData.published // Inverte lo stato della checkbox.
+    });
+  };
 
   return (
     <>
@@ -146,6 +166,19 @@ function App() {
                 <option value="arte">Arte</option>
                 <option value="sport">Sport</option>
               </select>
+            </div>
+
+            <div>
+              <label htmlFor="articlePublished">Pubblicato</label>
+              <input
+                id="articlePublished"
+                type="checkbox"
+                className="form-check-input"
+                name="published"
+                checked={formData.published}
+                onChange={handlePublishedChange}
+              />
+              <div>{availableMessage}</div>
             </div>
 
             <button
