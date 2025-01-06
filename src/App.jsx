@@ -12,6 +12,8 @@ const initialFormData = {
   published: false
 }
 
+const availableTags = ["HTML", "CSS", "Express.Js", "React"]; // Lista dei tags
+
 function App() {
 
   const [article, setArticle] = useState([]);
@@ -71,6 +73,26 @@ function App() {
     });
   };
 
+  // Gestione della sezione dei tag
+  const handleTagChange = (event) => {
+    const newValue = event.target.value;
+    const checked = event.target.checked;
+    let updatedTags;
+
+    if (checked) {
+      // Aggiunge il tag se è selezionato
+      updatedTags = [...formData.tags, newValue];
+    } else {
+      // Rimuove il tag se non è selezionato
+      updatedTags = formData.tags.filter((tag) => tag !== newValue);
+    }
+  
+    setFormData({
+      ...formData,
+      tags: updatedTags
+    });
+  }
+
   return (
     <>
       <div className="container">
@@ -86,6 +108,7 @@ function App() {
                       <h4>{curArticle.title}</h4>
                       <p>Autore: {curArticle.author}</p>
                       <p>Categoria: {curArticle.category}</p>
+                      <p>Tags: {curArticle.tags.join(", ")}</p>
                       <p>{curArticle.content}</p>
                       <button onClick={() => cancel(curArticle.id)} className="btn btn-danger">🗑️ Elimina</button>
                     </div>
@@ -161,14 +184,33 @@ function App() {
                 onChange={handleInputChange}
               >
                 <option value="" disabled>Seleziona una categoria</option>
-                <option value="tecnologia">Tecnologia</option>
-                <option value="scienza">Scienza</option>
-                <option value="arte">Arte</option>
-                <option value="sport">Sport</option>
+                <option value="HTML">HTML</option>
+                <option value="CSS">CSS</option>
+                <option value="Express.JS">Express.JS</option>
+                <option value="React">React</option>
               </select>
             </div>
 
             <div>
+              <p className="mt-3">Seleziona i tag:</p>
+              {availableTags.map((tag) => (
+                <div key={tag} className="form-check" style={{ display: "inline-block", marginRight: "10px" }}>
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id={`tag-${tag}`}
+                    value={tag}
+                    checked={formData.tags.includes(tag)}
+                    onChange={handleTagChange}
+                  />
+                  <label htmlFor={`tag-${tag}`} className="form-check-label">
+                    {tag}
+                  </label>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-3">
               <label htmlFor="articlePublished">Pubblicato</label>
               <input
                 id="articlePublished"
@@ -183,7 +225,7 @@ function App() {
 
             <button
               type="submit"
-              className="btn btn-success"
+              className="btn btn-success mt-2"
               disabled={!formData.title || !formData.author || !formData.content || !formData.category}
             >
               Invia
