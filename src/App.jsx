@@ -31,6 +31,13 @@ function App() {
     }
   }, [formData.published]);
 
+   // UseEffect per l'alert
+   useEffect(() => {
+    if (formData.published) {
+      alert("Hai selezionato di pubblicare l'articolo!");
+    }
+  }, [formData.published]);
+
   // Gestione del modulo quando viene inviato
   const handleArticleForm = (event) => {
     event.preventDefault();
